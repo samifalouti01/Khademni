@@ -41,7 +41,7 @@ const Header = () => {
         <>
             <header className="header">
                 <FaList className="menu-icon" onClick={toggleNav} />
-                <img src="KhademniLogo1.svg" className="logo" alt="logo" />
+                <img src="KhademniLogo2.svg" className="logo" alt="logo" />
                 <button className="logout-button" onClick={handleLogout} disabled={loading}>
                     {loading ? (
                         <div className="spinner"></div>
