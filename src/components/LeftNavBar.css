@@ -16,7 +16,6 @@
     -webkit-backdrop-filter: blur(10px); 
 }
 
-
 .nav-menu {
     display: flex;
     flex-direction: column;
