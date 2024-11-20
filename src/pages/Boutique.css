@@ -100,7 +100,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .boutique-container {
-        padding: 15px;
+        padding: 0px;
     }
 
     .recommended {
@@ -119,5 +119,11 @@
 
     .recommended h2 {
         font-size: 1.5rem;
+    }
+
+    .price img {
+        width: 30px;
+        height: 30px;
+        margin: 0;
     }
 }
