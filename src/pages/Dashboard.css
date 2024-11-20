@@ -101,11 +101,21 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    background-image: url('https://wekxcgoqkxqisrdmgvkp.supabase.co/storage/v1/object/public/user_pic/KhademniLogo.svg?t=2024-11-19T23%3A52%3A22.044Z'); 
+    background-size: 100px; 
+    background-position: center; 
+    background-repeat: no-repeat;
+}
+  
+  .hidden-alt {
+    position: relative;
+    color: white;
   }
   
   .card-image img {
     width: 100%;
     height: 100%;
+    border: 2px solid #ccc;
     border-radius: 300px;
     object-fit: cover;
   }
@@ -206,7 +216,13 @@
     .card-image {
         width: 100px;
         height: 100px;
+        background-size: 50px;
     }
+
+    .hidden-alt {
+        position: relative;
+        color: white;
+      }
 
     .dashboard-card h1 {
         font-size: 16px;

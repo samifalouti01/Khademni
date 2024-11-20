@@ -25,6 +25,8 @@ const Dashboard = () => {
     const [showParrain, setShowParrain] = useState(false); 
     const parrainModalRef = useRef(null);
     const [userImage, setUserImage] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
   
     const fetchUserData = useCallback(async (userId) => {
       const { data, error } = await supabase
@@ -48,6 +50,8 @@ const Dashboard = () => {
         calculateLevel(total);
       }
     }, []);
+
+    console.log(userImage);
   
     useEffect(() => {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -132,6 +136,102 @@ const Dashboard = () => {
   
     const openParrainModal = () => setShowParrain(true); 
     const closeParrainModal = () => setShowParrain(false);
+
+    const handleImageUpload = async (file) => {
+        setIsUploading(true);
+        setMessage('Uploading...');
+        try {
+          const user = JSON.parse(localStorage.getItem("user"));
+      
+          if (!user || !user.id) {
+            setMessage("User not logged in.");
+            return;
+          }
+      
+          console.log("Uploading file:", file);
+      
+          // Step 1: Clear the current image in user_data
+          const { error: deleteError } = await supabase
+            .from("user_data")
+            .update({ user_image: null }) // Set the user_image to null
+            .eq("id", user.id);
+      
+          if (deleteError) {
+            console.error("Error deleting user image:", deleteError);
+            setMessage("Failed to delete previous user image.");
+            return;
+          }
+      
+          // Step 2: Generate a unique filename
+          const fileName = `${user.id}-${Date.now()}-${file.name}`;
+          console.log("Uploading to Supabase Storage with filename:", fileName);
+      
+          // Step 3: Upload image to Supabase Storage
+          const { data: storageData, error: storageError } = await supabase.storage
+            .from("user_pic") // Ensure this matches the bucket name
+            .upload(fileName, file);
+      
+          // Log the storage upload response
+          if (storageError) {
+            console.error("Error uploading file:", storageError);
+            setMessage("Failed to upload image.");
+            return;
+          }
+          console.log("File uploaded successfully:", storageData);
+      
+          // Step 4: Get public URL for the uploaded image
+          const { data: publicURLData, error: publicURLError } = supabase.storage
+            .from("user_pic")
+            .getPublicUrl(fileName);
+      
+          // Log any errors for URL retrieval
+          if (publicURLError) {
+            console.error("Error getting public URL:", publicURLError);
+            setMessage("Failed to get public URL.");
+            return;
+          }
+      
+          const newImageUrl = publicURLData.publicUrl;
+          console.log("Public URL retrieved:", newImageUrl);
+      
+          // Step 5: Update the user's `user_image` in the database with the new image URL
+          const { error: dbError } = await supabase
+            .from("user_data")
+            .update({ user_image: newImageUrl })
+            .eq("id", user.id); // This ensures the update is for the correct user
+      
+          if (dbError) {
+            console.error("Error updating user image in database:", dbError);
+            setMessage("Failed to update image in database.");
+            return;
+          }
+      
+          // Step 6: Update the state and show success message
+          setUserImage(newImageUrl);
+          setMessage("Image updated successfully!");
+        } catch (error) {
+          console.error("Error handling image upload:", error);
+          setMessage("Something went wrong.");
+        }
+
+        const uploadInterval = setInterval(() => {
+            setUploadProgress((prev) => {
+              if (prev < 100) {
+                return prev + 10; // Simulate progress
+              } else {
+                clearInterval(uploadInterval);
+                setMessage('Upload Complete'); // Display completion message
+                setIsUploading(false); // Stop uploading
+                return 100;
+              }
+            });
+          }, 500);
+
+          setTimeout(() => {
+            setUserImage(URL.createObjectURL(file)); // Set image URL
+          }, 3000);
+    };
+    
   
     return (
       <div className="dashboard-container">
@@ -141,16 +241,36 @@ const Dashboard = () => {
             <button onClick={openParrainModal}>
               <FaUserFriends /> Parrainer
             </button>
-            <button>
+            <button onClick={() => navigate("/boutique")}>
               <FaCartPlus /> Nouvelle Commande
             </button>
           </div>
           <div className="dashboard-main">
             <div className="column">
               <div className="dashboard-card">
-                <div className="card-image">
-                  <img src={userImage || "Loading..."} alt="user" />
+              <div onClick={() => document.getElementById('file-input').click()}>
+              <div className="card-image">
+              <img src={userImage || "Loading..."} alt="ْ" className="hidden-alt" />
                 </div>
+                <input
+                    id="file-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={async (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        await handleImageUpload(file);
+                    }
+                    }}
+                    style={{ display: "none" }}
+                />
+
+                {isUploading && (
+                    <div>
+                    <progress value={uploadProgress} max="100"></progress>
+                    </div>
+                )}
+              </div>
                 <h1>{name || "Loading..."}</h1>
                 <h2 style={{ color: "#9A9A9A", fontWeight: "medium" }}>{level || "Loading..."}</h2>
                 <div className="copy-container">

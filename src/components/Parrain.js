@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa"; // Import the close icon
+import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "./Parrain.css";
@@ -14,12 +14,19 @@ const Parrain = React.forwardRef((props, ref) => {
     phone: "",
     email: "",
     birthdate: "",
+    card_recto: "",
+    card_verso: "",
   });
+  const [cardRectoFile, setCardRectoFile] = useState(null);
+  const [cardVersoFile, setCardVersoFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id) {
-      setFormData((prev) => ({ ...prev, parrain_id: user.id })); // Set parrain_id
+      setFormData((prev) => ({ ...prev, parrain_id: user.id }));
     } else {
       navigate("/login");
     }
@@ -30,20 +37,63 @@ const Parrain = React.forwardRef((props, ref) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (type === "recto") setCardRectoFile(file);
+    if (type === "verso") setCardVersoFile(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+  
     try {
-      const { data, error } = await supabase.from("user_data").insert([formData]);
-      if (error) {
-        console.error("Error inserting data:", error);
-      } else {
-        console.log("Data inserted successfully:", data);
-        alert("Parrainage réussi !");
+      let cardRectoUrl = "";
+      let cardVersoUrl = "";
+  
+      if (cardRectoFile) {
+        const { data: rectoData, error: rectoError } = await supabase.storage
+          .from("cards")
+          .upload(`recto/${Date.now()}_${cardRectoFile.name}`, cardRectoFile);
+        console.log({ rectoData, rectoError });
+        if (rectoError) {
+          console.error(rectoError);
+          throw new Error("Failed to upload recto image.");
+        }
+        cardRectoUrl = supabase.storage.from("cards").getPublicUrl(rectoData.path).data.publicUrl;
       }
+  
+      if (cardVersoFile) {
+        const { data: versoData, error: versoError } = await supabase.storage
+          .from("cards")
+          .upload(`verso/${Date.now()}_${cardVersoFile.name}`, cardVersoFile);
+        if (versoError) throw new Error("Failed to upload verso image.");
+        cardVersoUrl = supabase.storage.from("cards").getPublicUrl(versoData.path).data.publicUrl;
+      }
+  
+      const updatedFormData = {
+        ...formData,
+        card_recto: cardRectoUrl,
+        card_verso: cardVersoUrl,
+        perso: 0,
+        parainage_points: 0,  
+        parainage_users: 0,  
+        ppcg: 0,              
+      };
+  
+      const { data, error } = await supabase.from("user_data").insert([updatedFormData]);
+      console.log(data);
+      if (error) throw error;
+  
+      setSuccess("Parrainage réussi !");
     } catch (err) {
-      console.error("Unexpected error:", err);
+      setError(`Erreur : ${err.message || "Une erreur inconnue s'est produite."}`);
+    } finally {
+      setLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="parrain" ref={ref}>
@@ -53,7 +103,6 @@ const Parrain = React.forwardRef((props, ref) => {
           <FaTimes size={24} />
         </button>
       </div>
-
       <form className="parrain-form" onSubmit={handleSubmit}>
         <input
           type="hidden"
@@ -68,7 +117,6 @@ const Parrain = React.forwardRef((props, ref) => {
             name="name"
             className="parrain-input"
             value={formData.name}
-            placeholder=""
             onChange={handleChange}
             required
           />
@@ -128,10 +176,32 @@ const Parrain = React.forwardRef((props, ref) => {
             required
           />
         </label>
-        <button className="parrain-button" type="submit">
-          Parrainer
+        <label className="parrain-label">
+          Carte Recto:
+          <input
+            type="file"
+            className="parrain-input"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, "recto")}
+            required
+          />
+        </label>
+        <label className="parrain-label">
+          Carte Verso:
+          <input
+            type="file"
+            className="parrain-input"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, "verso")}
+            required
+          />
+        </label>
+        <button className="parrain-button" type="submit" disabled={loading}>
+          {loading ? "En cours..." : "Parrainer"}
         </button>
       </form>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
     </div>
   );
 });
