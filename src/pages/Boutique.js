@@ -7,9 +7,16 @@ import "./Boutique.css";
 
 const Boutique = () => {
   const [products, setProducts] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Tous");
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cartItems");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+  const [searchQuery, setSearchQuery] = useState(() => {
+    return localStorage.getItem("searchQuery") || "";
+  });
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    return localStorage.getItem("selectedCategory") || "Tous";
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const searchRef = useRef(null);
@@ -30,6 +37,18 @@ const Boutique = () => {
   useEffect(() => {
     fetchStoreData();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem("searchQuery", searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedCategory", selectedCategory);
+  }, [selectedCategory]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text).catch((err) => {
@@ -118,6 +137,7 @@ const Boutique = () => {
           placeholder={`Rechercher dans ${selectedCategory}...`}
           className="search-bar"
           onChange={handleSearch}
+          defaultValue={searchQuery}
         />
         <div className="cart-icon" onClick={() => setIsCartOpen(!isCartOpen)}>
           <FaShoppingCart />
