@@ -208,7 +208,11 @@ h3, p {
     background-color: #d6def6;
     gap: 20px;
     border-bottom: 1px solid #ddd;
+    position: sticky;  
+    top: 0;             
+    z-index: 1000;      
 }
+
 
 .toolbar input:focus {
     border: 1px solid #007bff;
@@ -262,5 +266,30 @@ h3, p {
   .category-buttons button.active {
     background-color: #007bff;
     color: white;
+  }
+  
+  .scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s;
+  }
+  
+  .scroll-to-top:hover {
+    background-color: #333;
+  }
+  
+  .scroll-to-top:focus {
+    outline: none;
   }
   

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import { supabase } from "../supabaseClient";
-import { FaCopy, FaShoppingCart } from "react-icons/fa";
+import { FaCopy, FaShoppingCart, FaArrowUp } from "react-icons/fa";  
 import Cart from "../components/Cart";
 import "./Boutique.css";
 
@@ -18,6 +18,8 @@ const Boutique = () => {
     return localStorage.getItem("selectedCategory") || "Tous";
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const [isScrollVisible, setIsScrollVisible] = useState(false); 
 
   const searchRef = useRef(null);
   const cartRef = useRef(null);
@@ -37,6 +39,23 @@ const Boutique = () => {
   useEffect(() => {
     fetchStoreData();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) {
+        setIsScrollVisible(true);
+      } else {
+        setIsScrollVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
@@ -189,6 +208,12 @@ const Boutique = () => {
           ))}
         </div>
       </div>
+
+      {isScrollVisible && (
+        <button className="scroll-to-top" onClick={handleScrollToTop}>
+          <FaArrowUp />
+        </button>
+      )}
     </div>
   );
 };

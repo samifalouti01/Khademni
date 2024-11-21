@@ -15,50 +15,50 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
 
   const handleBuyNow = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-
+  
     if (!user) {
       alert("Please log in before making a purchase.");
       return;
     }
-
+  
     if (!receiptFile) {
       alert("Please upload a receipt before proceeding.");
       return;
     }
-
+  
     try {
       const fileName = `${user.id}-${Date.now()}-${receiptFile.name}`;
       const { data: storageData, error: storageError } = await supabase.storage
         .from("receipt")
         .upload(fileName, receiptFile);
-
+  
       if (storageError || !storageData?.path) {
         alert("Failed to upload the receipt. Please try again.");
         return;
       }
-
+  
       const { data: publicUrlData } = supabase.storage
         .from("receipt")
         .getPublicUrl(storageData.path);
-
+  
       const publicUrl = publicUrlData?.publicUrl;
-
+  
       if (!publicUrl) {
         alert("Failed to retrieve receipt URL. Please try again.");
         return;
       }
-
+  
       const { data: userDetails, error: userError } = await supabase
         .from("user_data")
         .select("email, phone")
         .eq("id", user.id)
         .single();
-
+  
       if (userError || !userDetails) {
         alert("Unable to fetch user details. Please try again.");
         return;
       }
-
+  
       const orderData = {
         user_id: user.id,
         name: user.name,
@@ -67,10 +67,11 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
         product_ref: cartItems.map((item) => item.ref).join(", "),
         total_price: totalFC,
         receipt: publicUrl,
+        order_status: "en attente", 
       };
-
+  
       const { error: orderError } = await supabase.from("order").insert(orderData);
-
+  
       if (orderError) {
         alert("Failed to place the order. Please try again.");
       } else {
@@ -81,6 +82,7 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
       alert("An unexpected error occurred. Please try again.");
     }
   };
+  
 
   return (
     <div className="cart-dropdown">
