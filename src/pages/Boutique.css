@@ -1,3 +1,8 @@
+h3, p {
+    margin: 0;
+    padding: 0;
+}
+
 .boutique-container {
     max-width: 100%;
     margin: 0 auto;
@@ -21,7 +26,7 @@
 
 .product-grid {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -31,18 +36,19 @@
 
 .product-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: #fff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
-    width: 100%;
-    max-width: 350px;
+    width: 500px;
     margin: 0 auto;
     padding: 20px;
     transition: transform 0.3s ease-in-out;
+    gap: 100px;
+    cursor: pointer;
 }
 
 .product-card:hover {
@@ -50,8 +56,8 @@
 }
 
 .product-card img {
-    max-width: 350px;
-    height: 350px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 10px;
 }
@@ -60,7 +66,29 @@
     font-size: 1.6rem;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
+}
+
+.pr {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+}
+
+.price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .price {
@@ -93,9 +121,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     gap: 10px;
   }
+
+  .copy-container p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #707988;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -108,13 +141,15 @@
     }
 
     .product-card {
-        width: 100%;
-        max-width: 250px;
+        width: 90%;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 10px;
     }
 
     .product-card img {
-        width: 200px;
-        height: 200px;
+        width: 70px;
+        height: 70px;
     }
 
     .recommended h2 {
@@ -126,4 +161,106 @@
         height: 30px;
         margin: 0;
     }
+
+    .product-card h3 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .copy-container p {
+        font-size: 12px;
+    }
+
+    .price {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #007bff21;
+        border: 1px solid #007bff;
+        gap: 10px;
+    }
+    
+    .price p {
+        font-size: 16px;
+        color: #000;  
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .price img {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+    }
 }
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #d6def6;
+    gap: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.toolbar input:focus {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.search-bar {
+    width: 70%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+}
+
+.cart-icon {
+    position: relative;
+    font-size: 24px;
+    cursor: pointer;
+    color: #200061;
+}
+
+.cart-icon .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .category-buttons button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .category-buttons button.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
