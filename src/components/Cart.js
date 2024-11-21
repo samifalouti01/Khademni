@@ -15,7 +15,7 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
 
   const handleBuyNow = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-  
+    
     if (!user) {
       alert("Please log in before making a purchase.");
       return;
@@ -76,14 +76,16 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
         alert("Failed to place the order. Please try again.");
       } else {
         alert("Order placed successfully!");
-        onClose();
+  
+        onRemoveItem();  
+  
+        onClose();  
       }
     } catch {
       alert("An unexpected error occurred. Please try again.");
     }
   };
   
-
   return (
     <div className="cart-dropdown">
       <h3>Your Cart</h3>

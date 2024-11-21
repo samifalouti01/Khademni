@@ -79,10 +79,6 @@ const Boutique = () => {
     setCartItems((prevCart) => [...prevCart, product]);
   };
 
-  const handleRemoveFromCart = (index) => {
-    setCartItems((prevCart) => prevCart.filter((_, i) => i !== index));
-  };
-
   const handleSearch = () => {
     setSearchQuery(searchRef.current.value);
   };
@@ -126,6 +122,14 @@ const Boutique = () => {
     setIsCartOpen(false);
   };
 
+  const onRemoveItem = (index = null) => {
+    if (index === null) {
+      setCartItems([]); // Clears the entire cart
+    } else {
+      setCartItems(prevItems => prevItems.filter((_, i) => i !== index));
+    }
+  };
+
   return (
     <div className="boutique-container">
       <Header />
@@ -167,7 +171,7 @@ const Boutique = () => {
         <div ref={cartRef}>
           <Cart
             cartItems={cartItems}
-            onRemoveItem={handleRemoveFromCart}
+            onRemoveItem={onRemoveItem}
             onClose={handleCloseCart}
           />
         </div>
