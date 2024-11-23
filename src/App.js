@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Helpdesk from "./pages/Helpdesk";
 import Boutique from "./pages/Boutique";
 import Historique from "./pages/Historique";
+import AdminPanel from "./pages/Admin/AdminPanel";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/helpdesk" element={<Helpdesk />} />
           <Route path="/boutique" element={<Boutique />} />
           <Route path="/historique" element={<Historique />} />
+          <Route path="/admin-panel" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>

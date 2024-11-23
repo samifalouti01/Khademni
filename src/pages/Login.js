@@ -17,7 +17,7 @@ const Login = () => {
 
         const { data, error } = await supabase
             .from("user_data")
-            .select("id, identifier, name")
+            .select("id, identifier, name, blocked")
             .eq("identifier", identifier)
             .eq("password", password);
 
@@ -27,8 +27,20 @@ const Login = () => {
             setError("Invalid username or password");
         } else {
             const user = data[0];
-            localStorage.setItem("user", JSON.stringify(user)); 
-            navigate("/dashboard");
+
+            // Check if the account is blocked
+            if (user.blocked === "blocked") {
+                setError("Your account has been blocked");
+            } else {
+                localStorage.setItem("user", JSON.stringify(user)); 
+
+                // Navigate based on identifier
+                if (identifier.includes("company.khademni")) {
+                    navigate("/admin-panel"); // Adjust path to AdminPanel.js route
+                } else {
+                    navigate("/dashboard");
+                }
+            }
         }
     };
 

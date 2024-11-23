@@ -57,7 +57,6 @@ const Parrain = React.forwardRef((props, ref) => {
         const { data: rectoData, error: rectoError } = await supabase.storage
           .from("cards")
           .upload(`recto/${Date.now()}_${cardRectoFile.name}`, cardRectoFile);
-        console.log({ rectoData, rectoError });
         if (rectoError) {
           console.error(rectoError);
           throw new Error("Failed to upload recto image.");
@@ -73,19 +72,56 @@ const Parrain = React.forwardRef((props, ref) => {
         cardVersoUrl = supabase.storage.from("cards").getPublicUrl(versoData.path).data.publicUrl;
       }
   
+      // Get the current user from localStorage
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+  
+      // Retrieve the current user's parrain_id
+      const { data: currentUserData, error: userDataError } = await supabase
+        .from("user_data")
+        .select("parrain_id")
+        .eq("id", currentUser.id)
+        .single();
+  
+      if (userDataError) throw new Error("Failed to fetch current user data.");
+  
+      // Get the current user's parrain_id and combine it with the current user's ID
+      const parrainId = currentUserData.parrain_id;
+      const combinedParrainId = `${currentUser.id},${parrainId || ""}`; // Combine current user ID with parrain_id
+  
       const updatedFormData = {
         ...formData,
         card_recto: cardRectoUrl,
         card_verso: cardVersoUrl,
         perso: 0,
-        parainage_points: 0,  
-        parainage_users: 0,  
-        ppcg: 0,              
+        parainage_points: 0,
+        parainage_users: 0, // Initialize with 0
+        ppcg: 0,
+        parrain_id: combinedParrainId, // Set the combined parrain_id
       };
   
-      const { data, error } = await supabase.from("user_data").insert([updatedFormData]);
-      console.log(data);
+      // Insert the new user with the combined parrain_id
+      const { error } = await supabase.from("user_data").insert([updatedFormData]);
       if (error) throw error;
+  
+      // Update the current user's parainage_users field
+      const { data: userData, error: userError } = await supabase
+        .from("user_data")
+        .select("parainage_users")
+        .eq("id", currentUser.id)
+        .single();
+  
+      if (userError) throw new Error("Failed to fetch current user data.");
+  
+      const currentParainageUsers = parseInt(userData.parainage_users || "0", 10);
+      const updatedParainageUsers = currentParainageUsers + 1;
+  
+      // Update the current user's parainage_users value
+      const { error: updateError } = await supabase
+        .from("user_data")
+        .update({ parainage_users: updatedParainageUsers })
+        .eq("id", currentUser.id);
+  
+      if (updateError) throw new Error("Failed to update parainage_users.");
   
       setSuccess("Parrainage réussi !");
     } catch (err) {
