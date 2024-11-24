@@ -37,8 +37,7 @@ const Parrain = React.forwardRef((props, ref) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    if (name === "identifier") { setFormData({ ...formData, [name]: value.startsWith("DZ") ? value : `DZ${value}`, }); } else { setFormData({ ...formData, [name]: value, }); } };
 
   const handleCopy = () => {
     const textToCopy = `ID: ${formData.identifier}\nPassword: ${formData.password}`;
