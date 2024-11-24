@@ -112,6 +112,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 100px;
     overflow: hidden;
     background-image: url('https://wekxcgoqkxqisrdmgvkp.supabase.co/storage/v1/object/public/user_pic/KhademniLogo.svg?t=2024-11-19T23%3A52%3A22.044Z'); 
     background-size: 100px; 
