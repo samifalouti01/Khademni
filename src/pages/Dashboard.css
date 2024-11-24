@@ -100,6 +100,11 @@
     width: 90%;
   }
   
+  .flex-container h3,
+  .flex-container p {
+    color: #1a202c;
+  }
+
   .card-image {
     width: 200px;
     height: 200px;
