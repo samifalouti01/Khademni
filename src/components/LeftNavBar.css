@@ -19,7 +19,7 @@
 .nav-menu {
     display: flex;
     flex-direction: column;
-    padding-top: 70px;
+    padding-top: 80px;
     gap: 20px;
 }
 

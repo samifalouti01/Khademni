@@ -14,6 +14,7 @@
     margin-top: 20px;
   }
   
+  /* Table header and cell styles */
   th, td {
     padding: 12px;
     text-align: left;
@@ -60,11 +61,53 @@
     color: #555;
   }
   
-  /* Header styling */
-  h2 {
-    font-size: 24px;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .order-container {
+      margin: 10px;
+      padding: 15px;
+    }
+  
+    /* Adjust table cell padding for small screens */
+    th, td {
+      padding: 8px;
+    }
+  
+    /* Adjust button size for smaller screens */
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+  
+    /* Make the table scrollable horizontally on small screens */
+    table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Adjust font size for loading/error messages */
+    .loading, .error {
+      font-size: 16px;
+    }
+  }
+  
+  /* Extra small screens (e.g., smartphones in portrait mode) */
+  @media (max-width: 480px) {
+    .order-container {
+      margin: 5px;
+      padding: 10px;
+    }
+  
+    /* Adjust table padding even more for very small screens */
+    th, td {
+      padding: 6px;
+    }
+  
+    /* Further adjust button size */
+    button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
   }
   

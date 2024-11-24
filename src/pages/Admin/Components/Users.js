@@ -16,7 +16,7 @@ const Parrainage = () => {
       const { data, error } = await supabase
         .from('user_data')
         .select('*')
-        .neq('validate', 'validate'); // Exclude users with "validate" status
+        .neq('validate', 'unvalidate'); // Exclude users with "validate" status
 
       if (error) {
         console.error(error);

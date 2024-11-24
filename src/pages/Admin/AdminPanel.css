@@ -1,9 +1,14 @@
-/* General Styles */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f5f7;
+h1 {
+    color: #ecf0f1;
 }
+
+
+h2 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 12px;
+}
+
 
 .admin-panel {
     display: flex;
@@ -27,7 +32,7 @@ body {
 }
 
 .nav-button {
-    width: 90%;
+    width: 100%;
     padding: 10px 15px;
     margin: 5px 0;
     background: none;

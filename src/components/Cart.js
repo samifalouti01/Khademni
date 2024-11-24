@@ -110,6 +110,9 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
       <div className="cart-summary">
         <p>Total FC: {totalFC} FC</p>
         <p>Total DZD: {totalDZD.toLocaleString()} DZD</p>
+        <br />
+        <br />
+        <p style={{ fontWeight: "normal" }}>RIP: <span style={{ fontWeight: "bold" }}>002494729723</span></p>
       </div>
       <ul>
         <div className="cart-item">

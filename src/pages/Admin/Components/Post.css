@@ -1,5 +1,15 @@
+h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 12px;
+}
+
 /* Post.css */
 .post-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     max-width: 600px;
     margin: 20px auto;
     padding: 25px;
@@ -8,35 +18,11 @@
     background: #ffffff;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     font-family: 'Arial', sans-serif;
-}
-
-h1 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-input {
-    display: block;
-    width: 96%;
-    margin: 15px 0;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-}
-
-input:focus, select:focus {
-    border-color: #007bff;
-    outline: none;
-    background-color: #fff;
+    gap: 20px;
 }
 
 select {
     display: block;
-    margin: 15px 0;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -67,12 +53,6 @@ select {
 
 .button-primary:hover {
     background: #0056b3;
-}
-
-p {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
 }
 
 .spinner {

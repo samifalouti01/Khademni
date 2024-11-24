@@ -6,6 +6,7 @@ import Helpdesk from "./pages/Helpdesk";
 import Boutique from "./pages/Boutique";
 import Historique from "./pages/Historique";
 import AdminPanel from "./pages/Admin/AdminPanel";
+import MonEquipe from "./pages/MonEquipe";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/boutique" element={<Boutique />} />
           <Route path="/historique" element={<Historique />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
+          <Route path="/mon-equipe" element={<MonEquipe />} />
         </Routes>
       </div>
     </Router>

@@ -8,6 +8,7 @@ const Parrain = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     parrain_id: "",
+    validate: "unvalidate",
     name: "",
     identifier: "",
     password: "",
@@ -83,6 +84,13 @@ const Parrain = React.forwardRef((props, ref) => {
         .single();
   
       if (userDataError) throw new Error("Failed to fetch current user data.");
+
+      const { error: updateValidateError } = await supabase
+        .from("user_data")
+        .update({ validate: "unvalidate" })
+        .eq("id", currentUser.id);
+
+      if (updateValidateError) throw new Error("Failed to update validation status.");
   
       // Get the current user's parrain_id and combine it with the current user's ID
       const parrainId = currentUserData.parrain_id;

@@ -81,18 +81,21 @@ const Post = () => {
     <div className="post-container">
       <h1>Create New Post</h1>
       <input
+      className="parrain-input"
         type="text"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <input
+      className="parrain-input"
         type="text"
         placeholder="Reference"
         value={ref}
         onChange={(e) => setRef(e.target.value)}
       />
       <input
+      className="parrain-input"
         type="text"
         placeholder="Price"
         value={price}
@@ -106,6 +109,7 @@ const Post = () => {
         <option value="femmes">Femmes</option>
       </select>
       <input
+      className="parrain-input"
         type="file"
         accept="image/*"
         onChange={(e) => setFile(e.target.files[0])}
