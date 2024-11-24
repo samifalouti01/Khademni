@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "./Parrain.css";
@@ -23,6 +23,8 @@ const Parrain = React.forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -38,6 +40,12 @@ const Parrain = React.forwardRef((props, ref) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleCopy = () => {
+    const textToCopy = `ID: ${formData.identifier}\nPassword: ${formData.password}`;
+    navigator.clipboard.writeText(textToCopy);
+    alert("Credentials copied to clipboard!");
+  };
+
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
     if (type === "recto") setCardRectoFile(file);
@@ -51,6 +59,22 @@ const Parrain = React.forwardRef((props, ref) => {
     setSuccess(null);
   
     try {
+      const { data: existingIdentifier, error: identifierError } = await supabase
+        .from("user_data")
+        .select("id")
+        .eq("identifier", formData.identifier)
+        .single();
+
+      if (identifierError && identifierError.code !== "PGRST116") {
+        throw new Error("An error occurred while checking the identifier.");
+      }
+
+      if (existingIdentifier) {
+        setError("Erreur : Cet identifiant est déjà pris.");
+        setLoading(false);
+        return;
+      }
+
       let cardRectoUrl = "";
       let cardVersoUrl = "";
   
@@ -132,12 +156,15 @@ const Parrain = React.forwardRef((props, ref) => {
       if (updateError) throw new Error("Failed to update parainage_users.");
   
       setSuccess("Parrainage réussi !");
+      setShowPopup(true); // Show popup on success
     } catch (err) {
       setError(`Erreur : ${err.message || "Une erreur inconnue s'est produite."}`);
     } finally {
       setLoading(false);
     }
-  };  
+  };
+
+  const togglePasswordVisibility = () => { setIsPasswordVisible(!isPasswordVisible); };
 
   return (
     <div className="parrain" ref={ref}>
@@ -154,98 +181,100 @@ const Parrain = React.forwardRef((props, ref) => {
           value={formData.parrain_id}
           onChange={handleChange}
         />
-        <label className="parrain-label">
-          Nom et Prénom:
           <input
             type="text"
+            placeholder="Nom et Prénom"
             name="name"
             className="parrain-input"
             value={formData.name}
             onChange={handleChange}
             required
           />
-        </label>
-        <label className="parrain-label">
-          ID Numéro:
           <input
             type="text"
+            placeholder="ID Numérique"
             name="identifier"
             className="parrain-input"
             value={formData.identifier}
             onChange={handleChange}
             required
           />
-        </label>
-        <label className="parrain-label">
-          Mot de Passe:
-          <input
-            type="password"
-            name="password"
-            className="parrain-input"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label className="parrain-label">
-          Téléphone:
+          <div className="password-input-container">
+            <input
+              type={isPasswordVisible ? "text" : "password"}
+              placeholder="Mot de Passe"
+              name="password"
+              className="parrain-input"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <span className="toggle-password" onClick={togglePasswordVisibility}>
+              {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
           <input
             type="text"
+            placeholder="Téléphone"
             name="phone"
             className="parrain-input"
             value={formData.phone}
             onChange={handleChange}
             required
           />
-        </label>
-        <label className="parrain-label">
-          Email:
           <input
             type="email"
+            placeholder="Email"
             name="email"
             className="parrain-input"
             value={formData.email}
             onChange={handleChange}
             required
           />
-        </label>
-        <label className="parrain-label">
-          Date de Naissance:
           <input
             type="date"
             name="birthdate"
+            placeholder="Date de Naissance"
             className="parrain-input"
             value={formData.birthdate}
             onChange={handleChange}
             required
           />
-        </label>
-        <label className="parrain-label">
           Carte Recto:
           <input
             type="file"
+            name="Carte Recto"
             className="parrain-input"
             accept="image/*"
             onChange={(e) => handleFileChange(e, "recto")}
             required
           />
-        </label>
-        <label className="parrain-label">
           Carte Verso:
           <input
             type="file"
+            name="Carte Verso"
             className="parrain-input"
             accept="image/*"
             onChange={(e) => handleFileChange(e, "verso")}
             required
           />
-        </label>
         <button className="parrain-button" type="submit" disabled={loading}>
           {loading ? "En cours..." : "Parrainer"}
         </button>
       </form>
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
+      {showPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <h3>Credentials</h3>
+            <p>ID: {formData.identifier}</p>
+            <p>Password: {formData.password}</p>
+            <button onClick={handleCopy}>Copy</button>
+            <button onClick={() => setShowPopup(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 });

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 
 const Login = () => {
@@ -9,6 +10,13 @@ const Login = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        console.log("Toggle password visibility clicked!");
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+    
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -53,18 +61,23 @@ const Login = () => {
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Username"
+                    placeholder="ID Numérique"
                     className="login-input"
                     required
                 />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    className="login-input"
-                    required
-                />
+                <div className="password-input-containers">
+                    <input
+                        type={isPasswordVisible ? "text" : "password"}
+                        placeholder="Mot de Passe"
+                        className="parrain-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        />
+                    <span className="toggle-password" onClick={togglePasswordVisibility}>
+                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                    </span>
+                </div>
                 <button type="submit" className="login-button" disabled={loading}>
                     {loading ? <div className="spinner"></div> : "Login"}
                 </button>

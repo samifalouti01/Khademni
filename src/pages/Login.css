@@ -116,3 +116,26 @@
         width: 90%;
     }
 }
+
+.password-input-containers {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .parrain-input {
+    padding-right: 30px; 
+  }
+  
+  .toggle-password {
+    position: absolute;
+    top: 50%;
+    color: #333;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  
