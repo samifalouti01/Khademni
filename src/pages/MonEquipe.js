@@ -111,7 +111,6 @@ const MonEquipe = () => {
             <p><strong>Identifiant:</strong> {selectedUser.identifier}</p>
             <p><strong>Numéro de téléphone:</strong> {selectedUser.phone}</p>
             <p><strong>Date de naissance:</strong> {selectedUser.birthdate}</p>
-            <p><strong>Sexe:</strong> {selectedUser.sex}</p>
             <p><strong>Perso:</strong> {selectedUser.perso}</p>
             <p><strong>Parrainage Points:</strong> {selectedUser.parainage_points}</p>
             <p><strong>Parrainage Users:</strong> {selectedUser.parainage_users}</p>

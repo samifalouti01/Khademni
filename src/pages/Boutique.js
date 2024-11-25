@@ -3,10 +3,12 @@ import Header from "../components/Header";
 import { supabase } from "../supabaseClient";
 import { FaCopy, FaShoppingCart, FaArrowUp } from "react-icons/fa";  
 import Cart from "../components/Cart";
+import { useUser } from "../components/UserContext";
 import "./Boutique.css";
 
 const Boutique = () => {
   const [products, setProducts] = useState([]);
+  const { level, calculateLevel } = useUser();
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -130,6 +132,25 @@ const Boutique = () => {
     }
   };
 
+  const discountPercentages = {
+    "Animateur Adjoint": 0.35, // 35%
+    "Animateur": 0.38,         // 38%
+    "Manager Adjoint": 0.40,   // 40%
+    "Manager": 0.48,           // 48%
+  };
+
+  const discountMultiplier = discountPercentages[level] || 0; // Default to 0 (no discount) if level is not found
+
+    // Calculate discounted prices for each item
+  const discountedItems = cartItems.map((item) => ({
+    ...item,
+    discountedPrice: item.price * (1 - discountMultiplier), // Discounted price for FC
+  }));
+
+  // Calculate total FC (with discounts applied)
+  const pointsFC = discountedItems.reduce((total, item) => total + item.discountedPrice, 0);
+
+
   return (
     <div className="boutique-container">
       <Header />
@@ -204,7 +225,7 @@ const Boutique = () => {
               <div className="price-container">
                 <div className="price">
                   <img src="Coin.svg" alt="pièce" />
-                  <p>{product.price} FC</p>
+                  <p>{(product.price * (1 - discountMultiplier)).toFixed(2)} FC</p>
                 </div>
                 <h3>{(product.price * 100).toLocaleString()} DZD</h3>
               </div>

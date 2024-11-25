@@ -147,7 +147,7 @@ const Payments = () => {
         <h2>Team Size: {referrals.length}</h2>
       </div>
 
-      <h3>Referral Details:</h3>
+      <h3 style={{ color: "black" }}>Referral Details:</h3>
       <ul className="referral-list">
         {referrals.map((referral) => (
           <li key={referral.id} className="referral-item">
