@@ -100,12 +100,15 @@ const Help = () => {
                                 <td className="px-6 py-4 border-b">{request.message}</td>
                                 <td className="px-6 py-4 border-b">{new Date(request.created_at).toLocaleString()}</td>
                                 <td className="px-6 py-4 border-b flex space-x-2">
-                                    <button
-                                        className="px-3 py-1 bg-green-600 text-white rounded"
-                                        onClick={() => handleMarkResolved(request.id)}
-                                    >
-                                        Mark Resolved
-                                    </button>
+                                    {/* Only show "Mark Resolved" button if resolved is false */}
+                                    {!request.resolved && (
+                                        <button
+                                            className="px-3 py-1 bg-green-600 text-white rounded"
+                                            onClick={() => handleMarkResolved(request.id)}
+                                        >
+                                            Mark Resolved
+                                        </button>
+                                    )}
                                     <button
                                         className="px-3 py-1 bg-red-600 text-white rounded"
                                         onClick={() => handleDelete(request.id)}

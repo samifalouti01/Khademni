@@ -8,10 +8,12 @@ import Historique from "./pages/Historique";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import MonEquipe from "./pages/MonEquipe";
 import Payments from "./pages/Payments";
+import { UserProvider } from "./components/UserContext";
 
 
 function App() {
   return (
+    <UserProvider>
     <Router>
       <div className="App">
         <Routes>
@@ -26,6 +28,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </UserProvider>
   );
 }
 

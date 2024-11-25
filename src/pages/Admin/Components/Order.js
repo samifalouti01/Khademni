@@ -228,7 +228,7 @@ const Order = () => {
             <th>Email</th>
             <th>Product Ref</th>
             <th>Reçu</th>
-            <th>Total FC</th>
+            <th>Total Price</th>
             <th>Order Status</th>
             <th>Action</th>
           </tr>
@@ -251,7 +251,7 @@ const Order = () => {
                   />
                 )}
               </td>
-              <td>{order.total_price}</td>
+              <td>{order.total_price * 100} DA</td>
               <td>{order.order_status}</td>
               <td>
                 {order.order_status !== 'validé' && order.userData ? (

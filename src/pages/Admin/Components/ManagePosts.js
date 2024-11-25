@@ -98,11 +98,11 @@ const ManagePosts = () => {
   };
 
   const handleSaveEdit = async () => {
-    const { id, title, price, sex } = editingProduct;
+    const { id, title, price, sex, ref } = editingProduct;
 
     const { error } = await supabase
       .from("store")
-      .update({ title, price, sex })
+      .update({ title, price, sex, ref })
       .eq("id", id);
 
     if (error) {
@@ -218,6 +218,13 @@ const ManagePosts = () => {
               type="text"
               name="title"
               value={editingProduct.title}
+              onChange={handleInputChange}
+            />
+            <label>Ref:</label>
+            <input
+              type="text"
+              name="ref"
+              value={editingProduct.ref}
               onChange={handleInputChange}
             />
             <label>Price:</label>

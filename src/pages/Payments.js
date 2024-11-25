@@ -74,6 +74,7 @@ const Payments = () => {
   }, [userData, referrals]);
 
   const determineLevel = (points) => {
+    if (isNaN(points)) return "Distributeur";
     if (points >= 30000) return "Manager";
     if (points >= 18700) return "Manager Adjoint";
     if (points >= 6250) return "Animateur";
@@ -108,9 +109,19 @@ const Payments = () => {
         "Animateur Adjoint": 0,
       },
     };
-
+  
+    // Fallback if userLevel or referralLevel are not valid
+    if (!commissionMatrix[userLevel]) {
+      console.warn(`Invalid userLevel: ${userLevel}`);
+      return 0;
+    }
+    if (!commissionMatrix[userLevel][referralLevel]) {
+      console.warn(`Invalid referralLevel: ${referralLevel}`);
+      return 0;
+    }
+  
     return commissionMatrix[userLevel][referralLevel] || 0;
-  };
+  };  
 
   useEffect(() => {
     fetchUserData();
