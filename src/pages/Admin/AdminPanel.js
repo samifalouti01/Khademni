@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiLogOut, FiUsers, FiBarChart } from "react-icons/fi";
-import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle } from "react-icons/fa";
+import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle, FaMoneyCheck } from "react-icons/fa";
 import Dashboard from "./Components/Dashboard"; 
 import Order from "./Components/Order";
 import Parrainage from "./Components/Parrainage";
@@ -9,6 +9,7 @@ import Post from "./Components/Post";
 import Users from "./Components/Users";
 import ManagePost from "./Components/ManagePosts";
 import Help from "./Components/Help";
+import UserPayment from "./Components/UserPayment";
 import "./AdminPanel.css";
 
 const AdminPanel = () => {
@@ -32,7 +33,9 @@ const AdminPanel = () => {
     const renderContent = () => {
         switch (activeSection) {
             case "dashboard":
-                return <Dashboard />; // Render the Dashboard component
+                return <Dashboard />; 
+            case "user-payments":
+                return <UserPayment />;
             case "order":
                 return <Order />;
             case "parrainage":
@@ -61,6 +64,12 @@ const AdminPanel = () => {
                         onClick={() => setActiveSection("dashboard")}
                     >
                         <FiBarChart /> <span>Dashboard</span>
+                    </button>
+                    <button
+                        className={`nav-button ${activeSection === "user-payments" ? "active" : ""}`}
+                        onClick={() => setActiveSection("user-payments")}
+                    >
+                        <FaMoneyCheck /> <span>User Payments</span>
                     </button>
                     <button
                         className={`nav-button ${activeSection === "order" ? "active" : ""}`}

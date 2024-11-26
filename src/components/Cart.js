@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTrash, FaTimes } from "react-icons/fa";
+import { FaTrash, FaTimes, FaCopy } from "react-icons/fa";
 import { supabase } from "../supabaseClient";
 import { useUser } from "./UserContext";
 import "./Cart.css";
@@ -7,6 +7,7 @@ import "./Cart.css";
 const Cart = ({ cartItems, onRemoveItem, onClose }) => {
   const { level, calculateLevel } = useUser();
   const [receiptFile, setReceiptFile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Define discount percentages for each level
   const discountPercentages = {
@@ -38,74 +39,71 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
 
   const handleBuyNow = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    
+
     if (!user) {
       alert("Please log in before making a purchase.");
       return;
     }
-  
-    if (!receiptFile) {
+
+    if (selectedImage === "poste" && !receiptFile) {
       alert("Please upload a receipt before proceeding.");
       return;
     }
-  
+
     try {
-      const fileName = `${user.id}-${Date.now()}-${receiptFile.name}`;
-      const { data: storageData, error: storageError } = await supabase.storage
-        .from("receipt")
-        .upload(fileName, receiptFile);
-  
-      if (storageError || !storageData?.path) {
-        alert("Failed to upload the receipt. Please try again.");
-        return;
+      const fileName = receiptFile && `${user.id}-${Date.now()}-${receiptFile.name}`;
+      let publicUrl = null;
+
+      if (receiptFile) {
+        const { data: storageData, error: storageError } = await supabase.storage
+          .from("receipt")
+          .upload(fileName, receiptFile);
+
+        if (storageError || !storageData?.path) {
+          alert("Failed to upload the receipt. Please try again.");
+          return;
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("receipt")
+          .getPublicUrl(storageData.path);
+
+        publicUrl = publicUrlData?.publicUrl;
       }
-  
-      const { data: publicUrlData } = supabase.storage
-        .from("receipt")
-        .getPublicUrl(storageData.path);
-  
-      const publicUrl = publicUrlData?.publicUrl;
-  
-      if (!publicUrl) {
-        alert("Failed to retrieve receipt URL. Please try again.");
-        return;
-      }
-  
-      const { data: userDetails, error: userError } = await supabase
-        .from("user_data")
-        .select("email, phone")
-        .eq("id", user.id)
-        .single();
-  
-      if (userError || !userDetails) {
-        alert("Unable to fetch user details. Please try again.");
-        return;
-      }
-  
+
       const orderData = {
         user_id: user.id,
         name: user.name,
-        phone: userDetails.phone,
-        email: userDetails.email,
+        phone: user.phone,
+        email: user.email,
         product_ref: cartItems.map((item) => item.ref).join(", "),
-        total_price: totalFC,
-        receipt: publicUrl,
+        total_price: totalFC.toFixed(2),
+        receipt: publicUrl || "By BaridiMob",
         order_status: "en attente", 
       };
-  
+
       const { error: orderError } = await supabase.from("order").insert(orderData);
-  
+
       if (orderError) {
         alert("Failed to place the order. Please try again.");
       } else {
         alert("Order placed successfully!");
-  
         onRemoveItem();  
         onClose();  
       }
     } catch {
       alert("An unexpected error occurred. Please try again.");
     }
+  };
+
+  const handleClick = (imageName) => {
+    setSelectedImage(imageName);
+  };
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text).catch((err) => {
+      console.error("Échec de la copie du texte :", err);
+    });
   };
 
   return (
@@ -144,30 +142,53 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
       </div>
       
       <ul>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-          <p style={{ fontWeight: "normal" }}>RIP: <span style={{ fontWeight: "bold" }}>002494729723</span></p>
-          <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        <div className="container">
+        <div className="image-container">
             <img
-              style={{ width: "auto", height: "50px" }}
+              className="imageP"
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/AlgeriePoste.svg/1200px-AlgeriePoste.svg.png"
               alt="poste"
+              onClick={() => handleClick("poste")}
+              tabIndex="0"
             />
             <img
-              style={{ width: "auto", height: "50px" }}
+              className="imageP"
               src="https://seeklogo.com/images/B/baridimob-logo-2E48D2A2FB-seeklogo.com.png"
               alt="baridi"
+              onClick={() => handleClick("baridimob")}
+              tabIndex="0"
             />
           </div>
-          <label className="paiment_label">
-            Envoyer le reçu:
-            <input
-              type="file"
-              className="paiment-input"
-              accept="image/*"
-              onChange={handleFileChange}
-              required
-            />
-          </label>
+
+          {selectedImage && (
+            <div className="details">
+              <h3 style={{ color: "black" }}>Pour {selectedImage}</h3>
+              <br />
+              {selectedImage === "poste" && (
+                <div>
+                  <p><span className="label">Nom:</span> <span>Imad Boulaa</span></p>
+                  <p><span className="label">Numéro de CCP:</span> <span>0022040544 <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("0022040544"); }} /></span></p>
+                  <p><span className="label">Le clé:</span> <span>79 <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("79"); }} /></span></p>
+                  <br />
+                  <p style={{ color: "black" }}>Envoyer la photo du reçu:</p>
+                  <input
+                    type="file"
+                    className="paiment-input"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
+              {selectedImage === "baridimob" && (
+                <div>
+                  <p><span className="label">Rip:</span> <span>002204054479 <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("0022040544"); }} /></span></p>
+                  <br />
+                  <p style={{ color: "black" }}>Envoyer la photo du reçu à cette adresse e-mail:</p>
+                  <p><span style={{ color: "black" }} className="label">E-mail:</span> <span>khademni@outlook.com <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("khademni@outlook.com"); }} /></span></p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </ul>
       

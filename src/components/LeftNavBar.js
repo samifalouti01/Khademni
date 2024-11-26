@@ -1,5 +1,5 @@
 import React from "react";
-import { FaTachometerAlt, FaQuestionCircle, FaHistory, FaUsers, FaMoneyBill, FaProjectDiagram } from "react-icons/fa";
+import { FaTachometerAlt, FaQuestionCircle, FaHistory, FaUsers, FaMoneyBill, FaProjectDiagram, FaCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./LeftNavBar.css";
 
@@ -32,6 +32,10 @@ const LeftNavBar = React.forwardRef((props, ref) => {
         <button className="nav-item" onClick={() => navigate("/catalogue")}>
           <FaProjectDiagram className="nav-icon" />
           Catalogue
+        </button>
+        <button className="nav-item" onClick={() => navigate("/settings")}>
+          <FaCog className="nav-icon" />
+          Settings
         </button>
       </nav>
     </div>

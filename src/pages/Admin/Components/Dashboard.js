@@ -115,7 +115,7 @@ const Dashboard = () => {
     }, []);
 
     if (loading) {
-        return <p>Loading dashboard data...</p>;
+        return <p style={{ color: "black" }}>Loading dashboard data...</p>;
     }
 
     const chartData = {

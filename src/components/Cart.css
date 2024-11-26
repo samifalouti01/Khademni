@@ -140,3 +140,60 @@ h4 {
   border-color: #007bff;
   box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
 }
+
+.container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/* Flex container for the images */
+.image-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+/* Style for the images */
+.imageP {
+  width: auto;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Add a hover effect on the images */
+.imageP:hover {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #6200ff;
+  box-shadow: 1px 1px 5px rgb(0, 123, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.imageP:focus {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #007bff;
+  box-shadow: 1px 1px 5px rgb(0, 123, 255, 0.5);
+}
+
+/* Style for the details section */
+.details {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.details h3 {
+  margin-top: 0;
+}
+
+.details p {
+  font-size: 16px;
+  color: #555;
+}

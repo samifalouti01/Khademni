@@ -208,6 +208,10 @@ const Order = () => {
     return <div>Error: {error}</div>;
   }
 
+  const isValidImageUrl = (url) => {
+    return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(url);  // Check for common image extensions
+  };
+
   return (
     <div>
       {/* Search Bar */}
@@ -242,13 +246,15 @@ const Order = () => {
               <td>{order.email}</td>
               <td>{order.product_ref}</td>
               <td>
-                {order.receipt && (
+                {order.receipt && isValidImageUrl(order.receipt) ? (
                   <img
                     src={order.receipt}
-                    alt={`${order.name}`}  
+                    alt={`${order.name}`}
                     style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
                     onClick={() => openModal(order.receipt)}
                   />
+                ) : (
+                  <span>{order.receipt}</span> 
                 )}
               </td>
               <td>{order.total_price * 100} DA</td>
