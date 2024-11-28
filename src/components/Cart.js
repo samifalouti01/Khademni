@@ -181,9 +181,9 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
               )}
               {selectedImage === "baridimob" && (
                 <div>
-                  <p><span className="label">Rip:</span> <span>002204054479 <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("0022040544"); }} /></span></p>
+                  <p><span className="label">Rip:</span> <span>002494729723 <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("0022040544"); }} /></span></p>
                   <br />
-                  <p style={{ color: "black" }}>Envoyer la photo du reçu à cette adresse e-mail:</p>
+                  <p style={{ color: "black" }}>Envoyer le reçu à cette adresse e-mail:</p>
                   <p><span style={{ color: "black" }} className="label">E-mail:</span> <span>khademni@outlook.com <FaCopy className="copy-icon" onClick={(e) => { e.stopPropagation(); handleCopy("khademni@outlook.com"); }} /></span></p>
                 </div>
               )}
