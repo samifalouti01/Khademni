@@ -167,7 +167,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <Header />
         <div className="banner">
-          <span className="countdown"><p>Challenge se termine dans</p>{timeLeft}</span>
+          <span className="countdown"><p className="countdown">Challenge se termine dans</p>{timeLeft}</span>
         </div>
         <div className="float">
           <button onClick={openParrainModal}>

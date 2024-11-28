@@ -260,6 +260,11 @@
       max-width: 100%;
       border-radius: 20px;
     }
+      
+    .banner span,
+    .banner p {
+      font-size: 24px;
+    }
   }
   
   .challenge {
@@ -271,13 +276,11 @@
 
   .banner {
     position: sticky;
-    width: 100%;
     background-color: #007bff50;
     color: #a52a2a;
     text-align: center;
     padding: 20px;
     top: 0px;
-    font-size: 24px;
     font-weight: bold;
     z-index: 1002;
     animation: flicker 1.5s infinite;
