@@ -255,5 +255,40 @@
         font-size: 14px;
         color: #6c757d;
     }
+
+    .challenge {
+      max-width: 100%;
+      border-radius: 20px;
+    }
+  }
+  
+  .challenge {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-radius: 20px;
+  }
+
+  .banner {
+    position: sticky;
+    width: 100%;
+    background-color: #007bff50;
+    color: #a52a2a;
+    text-align: center;
+    padding: 20px;
+    top: 0px;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 1002;
+    animation: flicker 1.5s infinite;
+  }
+  
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .countdown {
+    font-size: 28px;
   }
   

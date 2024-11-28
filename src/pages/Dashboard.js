@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showParrain, setShowParrain] = useState(false);
   const parrainModalRef = useRef(null);
+  const [timeLeft, setTimeLeft] = useState('');
 
   const fetchUserData = useCallback(async (userId) => {
     const { data, error } = await supabase
@@ -130,10 +131,44 @@ const Dashboard = () => {
     setTimeout(() => setUserImage(URL.createObjectURL(file)), 3000);
   };
 
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const targetDate = new Date(now); // Start from the current date
+      targetDate.setMonth(targetDate.getMonth() + 1); // Add 1 month
+      targetDate.setHours(0, 0, 0, 0); // Set to the start of the day
+
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        return '00j 00h 00m 00s'; // Countdown is over
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      return `${days}j ${hours}h ${minutes}m ${seconds}s`;
+    };
+
+    const updateCountdown = () => {
+      setTimeLeft(calculateTimeLeft());
+    };
+
+    updateCountdown(); // Initial calculation
+    const timer = setInterval(updateCountdown, 1000); // Update every second
+
+    return () => clearInterval(timer); // Clean up the interval
+  }, []);
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
         <Header />
+        <div className="banner">
+          <span className="countdown"><p>Challenge se termine dans</p>{timeLeft}</span>
+        </div>
         <div className="float">
           <button onClick={openParrainModal}>
             <FaUserFriends /> Parrainer
@@ -218,6 +253,9 @@ const Dashboard = () => {
                 {pointsToNextLevel}
               </p>
             </div>
+            <div className="dashboard-card">
+            <img src="https://wekxcgoqkxqisrdmgvkp.supabase.co/storage/v1/object/public/user_pic/Hotel%205%20etoiles.gif?t=2024-11-28T01%3A36%3A20.432Z" alt="challenge" className="challenge" />
+          </div>
           </div>
         </div>
       </div>

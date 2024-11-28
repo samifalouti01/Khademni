@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../supabaseClient";
+import { FaCopy } from "react-icons/fa";
 import './Parrainage.css';
 
 const Parrainage = () => {
@@ -99,6 +100,12 @@ const Parrainage = () => {
     return <div>Loading...</div>;
   }
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text).catch((err) => {
+      console.error("Failed to copy text:", err);
+    });
+  };
+
   return (
     <div>
       {/* Search Bar */}
@@ -117,6 +124,7 @@ const Parrainage = () => {
             <th>Identifier</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Parrain</th>
             <th>Birthdate</th>
             <th>Card Recto</th>
             <th>Card Verso</th>
@@ -127,11 +135,20 @@ const Parrainage = () => {
         <tbody>
           {filteredOrders.map(user => (
             <tr key={user.id}>
-              <td>{user.id}</td>
+              <td style={{border: "1px solid black"}}>{user.id}</td>
               <td>{user.created_at}</td>
               <td>{user.identifier}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>
+              <td style={{ textAlign: "center", border: "1px solid black"}}>
+              <FaCopy
+                style={{ cursor: "pointer", fontSize: "20px", marginTop: "-18px", marginLeft: "-18px", padding: "0px" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopy(user.parrain_id?.split(',')[0]);
+                  }}
+                />
+              </td>
               <td>{user.birthdate}</td>
               <td>
                 {user.card_recto && (
