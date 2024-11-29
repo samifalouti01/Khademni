@@ -282,7 +282,6 @@
     padding: 20px;
     top: 0px;
     font-weight: bold;
-    z-index: 1002;
     animation: flicker 1.5s infinite;
   }
   
