@@ -280,6 +280,7 @@
     color: #a52a2a;
     text-align: center;
     padding: 20px;
+    z-index: 1001;
     top: 0px;
     font-weight: bold;
     animation: flicker 1.5s infinite;
