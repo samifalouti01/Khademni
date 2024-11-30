@@ -229,7 +229,7 @@ const Order = () => {
             <th>ID</th>
             <th>Created At</th>
             <th>Name</th>
-            <th>Email</th>
+            <th>Phone</th>
             <th>Product Ref</th>
             <th>Reçu</th>
             <th>Total Price</th>
@@ -243,7 +243,7 @@ const Order = () => {
               <td>{order.id}</td>
               <td>{new Date(order.created_at).toLocaleString()}</td>
               <td>{order.name}</td>
-              <td>{order.email}</td>
+              <td>{order.phone}</td>
               <td>{order.product_ref}</td>
               <td>
                 {order.receipt && isValidImageUrl(order.receipt) ? (

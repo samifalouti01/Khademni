@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiLogOut, FiUsers, FiBarChart } from "react-icons/fi";
-import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle, FaMoneyCheck } from "react-icons/fa";
+import { FiLogOut, FiUsers, FiUserPlus, FiBarChart } from "react-icons/fi";
+import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle, FaMoneyCheck, FaArrowAltCircleUp, FaRegMoneyBillAlt, FaMoneyCheckAlt } from "react-icons/fa";
 import Dashboard from "./Components/Dashboard"; 
 import Order from "./Components/Order";
 import Parrainage from "./Components/Parrainage";
@@ -10,6 +10,9 @@ import Users from "./Components/Users";
 import ManagePost from "./Components/ManagePosts";
 import Help from "./Components/Help";
 import UserPayment from "./Components/UserPayment";
+import MonthlyUp from "./Components/MonthlyUp";
+import ParrainagePayment from "./Components/ParrainagePayment";
+import PaListPay from "./Components/PaListPay";
 import "./AdminPanel.css";
 
 const AdminPanel = () => {
@@ -48,6 +51,12 @@ const AdminPanel = () => {
                 return <ManagePost />;
             case "help":
                 return <Help />;
+            case "up":
+                return <MonthlyUp />;
+            case "pa-payment":
+                return <ParrainagePayment />;
+            case "pa-list-pay":
+                return <PaListPay />;
             default:
                 return <h2>Welcome to the Admin Panel!</h2>;
         }
@@ -81,7 +90,7 @@ const AdminPanel = () => {
                         className={`nav-button ${activeSection === "parrainage" ? "active" : ""}`}
                         onClick={() => setActiveSection("parrainage")}
                     >
-                        <FiUsers /> <span>Parrainage</span>
+                        <FiUserPlus /> <span>Parrainage</span>
                     </button>
                     <button
                         className={`nav-button ${activeSection === "users" ? "active" : ""}`}
@@ -106,6 +115,24 @@ const AdminPanel = () => {
                         onClick={() => setActiveSection("help")}
                     >
                         <FaQuestionCircle /> <span>HelpDesk</span>
+                    </button>
+                    <button
+                        className={`nav-button ${activeSection === "up" ? "active" : ""}`}
+                        onClick={() => setActiveSection("up")}
+                    >
+                        <FaArrowAltCircleUp /> <span>UP</span>
+                    </button>
+                    <button
+                        className={`nav-button ${activeSection === "pa-payment" ? "active" : ""}`}
+                        onClick={() => setActiveSection("pa-payment")}
+                    >
+                        <FaMoneyCheckAlt /> <span>PA-Payment</span>
+                    </button>
+                    <button
+                        className={`nav-button ${activeSection === "pa-list-pay" ? "active" : ""}`}
+                        onClick={() => setActiveSection("pa-list-pay")}
+                    >
+                        <FaRegMoneyBillAlt /> <span>PA-List_Pay</span>
                     </button>
                 </nav>
             </aside>
