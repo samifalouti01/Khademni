@@ -13,7 +13,7 @@ const Cart = ({ cartItems, onRemoveItem, onClose }) => {
   const discountPercentages = {
     "Animateur Adjoint": 0.35, // 35%
     "Animateur": 0.38,         // 38%
-    "Manager Adjoint": 0.40,   // 40%
+    "Manager Adjoint": 0.43,   // 40%
     "Manager": 0.48,           // 48%
   };
 

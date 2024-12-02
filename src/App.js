@@ -11,6 +11,7 @@ import Payments from "./pages/Payments";
 import Catalogue from "./pages/Catalogue";
 import { UserProvider } from "./components/UserContext";
 import Settings from "./pages/Settings";
+import Presentation from "./pages/Presentation";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/payments" element={<Payments />} />
           <Route path="/catalogue" element={<Catalogue />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/presentation" element={<Presentation />} />
         </Routes>
       </div>
     </Router>

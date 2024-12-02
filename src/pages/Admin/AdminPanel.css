@@ -32,6 +32,7 @@ h2 {
 }
 
 .nav-button {
+    position: relative;
     width: 100%;
     padding: 10px 15px;
     margin: 5px 0;
@@ -46,6 +47,18 @@ h2 {
     align-items: center;
     gap: 10px;
 }
+
+.notification-circle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
 
 .nav-button.active, .nav-button:hover {
     background-color: #34495e;
