@@ -49,8 +49,8 @@ export const UserProvider = ({ children }) => {
 
   const fetchUserData = useCallback(async (userId) => {
     const { data, error } = await supabase
-      .from("user_data")
-      .select("perso, parainage_points, ppcg")
+      .from("history_data")
+      .select("ppcg")
       .eq("id", userId)
       .single();
 
@@ -59,7 +59,7 @@ export const UserProvider = ({ children }) => {
       return;
     }
 
-    const total = Number(data.perso || 0) + Number(data.parainage_points || 0) + Number(data.ppcg || 0);
+    const total = Number(data.ppcg || 0);
     setTotalPoints(total);
     calculateLevel(total);
   }, [calculateLevel]);

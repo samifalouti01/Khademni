@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { FaCopy, FaUserFriends, FaCartPlus } from "react-icons/fa";
+import { FaCopy, FaUserPlus, FaCartPlus } from "react-icons/fa";
 import { supabase } from "../supabaseClient";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import Parrain from "../components/Parrain";
@@ -27,24 +27,35 @@ const Dashboard = () => {
   const [timeLeft, setTimeLeft] = useState('');
 
   const fetchUserData = useCallback(async (userId) => {
-    const { data, error } = await supabase
+    const { data: userData, error: userError } = await supabase
       .from("user_data")
       .select("id, user_image, identifier, name, perso, parainage_points, parainage_users, ppcg")
       .eq("id", userId)
       .single();
 
-    if (error) {
-      console.error("Error fetching user data:", error);
+    if (userError) {
+      console.userError("Error fetching user data:", userError);
     } else {
-      setIdentifier(data.identifier);
-      setName(data.name);
-      setPerso(data.perso);
-      setParainagePoints(data.parainage_points);
-      setParainageUsers(data.parainage_users);
-      setPpcg(data.ppcg);
-      setUserImage(data.user_image);
-      const total = Number(data.perso || 0) + Number(data.parainage_points || 0) + Number(data.ppcg || 0);
-      calculateLevel(total); // Recalculate level when total points change
+      setIdentifier(userData.identifier);
+      setName(userData.name);
+      setPerso(userData.perso);
+      setParainagePoints(userData.parainage_points);
+      setParainageUsers(userData.parainage_users);
+      setPpcg(userData.ppcg);
+      setUserImage(userData.user_image);
+    }
+
+    const { data: historyData, error: historyError } = await supabase
+      .from("history_data")
+      .select("perso, parainage_points, ppcg")
+      .eq("id", userId)
+      .single();
+
+    if (historyError) {
+      console.historyError("Error fetching user data:", historyError);
+    } else {
+      const total = Number(historyData.ppcg || 0);
+      calculateLevel(total); 
     }
   }, [calculateLevel]);
 
@@ -134,33 +145,32 @@ const Dashboard = () => {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
-      const targetDate = new Date(now); // Start from the current date
-      targetDate.setMonth(targetDate.getMonth() + 1); // Add 1 month
+      const targetDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Add 30 days in milliseconds
       targetDate.setHours(0, 0, 0, 0); // Set to the start of the day
-
+  
       const difference = targetDate - now;
-
+  
       if (difference <= 0) {
         return '00j 00h 00m 00s'; // Countdown is over
       }
-
+  
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((difference / 1000 / 60) % 60);
       const seconds = Math.floor((difference / 1000) % 60);
-
+  
       return `${days}j ${hours}h ${minutes}m ${seconds}s`;
     };
-
+  
     const updateCountdown = () => {
       setTimeLeft(calculateTimeLeft());
     };
-
+  
     updateCountdown(); // Initial calculation
     const timer = setInterval(updateCountdown, 1000); // Update every second
-
+  
     return () => clearInterval(timer); // Clean up the interval
-  }, []);
+  }, []);  
 
   return (
     <div className="dashboard-container">
@@ -171,7 +181,7 @@ const Dashboard = () => {
         </div>
         <div className="float">
           <button onClick={openParrainModal}>
-            <FaUserFriends /> Parrainer
+            <FaUserPlus /> Parrainer
           </button>
           <button onClick={() => navigate("/boutique")}>
             <FaCartPlus /> Nouvelle Commande
