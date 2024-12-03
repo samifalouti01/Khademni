@@ -106,9 +106,9 @@ const Boutique = () => {
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       selectedCategory === "Tous" || product.sex === selectedCategory.toLowerCase();
-    const matchesSearch = product.ref
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      const matchesSearch = product.ref.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      product.title.toLowerCase().includes(searchQuery.toLowerCase());
+
     return matchesCategory && matchesSearch;
   });
 
