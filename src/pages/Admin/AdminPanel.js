@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiLogOut, FiUsers, FiUserPlus, FiBarChart } from "react-icons/fi";
-import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle, FaMoneyCheck, FaArrowAltCircleUp, FaRegMoneyBillAlt, FaMoneyCheckAlt } from "react-icons/fa";
+import { FaTasks, FaRegPlusSquare, FaEdit, FaQuestionCircle, FaMoneyCheck, FaArrowAltCircleUp, FaRegMoneyBillAlt, FaMoneyCheckAlt, FaMoneyBillWaveAlt } from "react-icons/fa";
 import Dashboard from "./Components/Dashboard"; 
 import Order from "./Components/Order";
 import Parrainage from "./Components/Parrainage";
@@ -13,6 +13,7 @@ import UserPayment from "./Components/UserPayment";
 import MonthlyUp from "./Components/MonthlyUp";
 import ParrainagePayment from "./Components/ParrainagePayment";
 import PaListPay from "./Components/PaListPay";
+import Income from "./Components/Income";
 import "./AdminPanel.css";
 
 const AdminPanel = () => {
@@ -57,6 +58,8 @@ const AdminPanel = () => {
                 return <ParrainagePayment />;
             case "pa-list-pay":
                 return <PaListPay />;
+            case "income":
+                return <Income />;
             default:
                 return <h2>Welcome to the Admin Panel!</h2>;
         }
@@ -133,6 +136,12 @@ const AdminPanel = () => {
                         onClick={() => setActiveSection("pa-list-pay")}
                     >
                         <FaRegMoneyBillAlt /> <span>PA-List_Pay</span>
+                    </button>
+                    <button
+                        className={`nav-button ${activeSection === "income" ? "active" : ""}`}
+                        onClick={() => setActiveSection("income")}
+                    >
+                        <FaMoneyBillWaveAlt /> <span>Income</span>
                     </button>
                 </nav>
             </aside>

@@ -65,7 +65,7 @@ const Dashboard = () => {
 
             // Calculate level counts based on points
             const { data: userPoints } = await supabase
-                .from("user_data")
+                .from("history_data")
                 .select("ppcg"); // Fetch ppcg instead of points
 
             const levelCounts = {

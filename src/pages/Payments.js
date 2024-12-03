@@ -15,20 +15,36 @@ const Payments = () => {
       alert("Please log in.");
       return;
     }
-
+  
     const currentUserId = String(currentUser.id);
     setUserId(currentUserId);
-
-    const { data, error } = await supabase
+  
+    // Fetch aggregated PPCG from history_data
+    const { data: userPpcgData, error: userPpcgError } = await supabase
+      .from("history_data")
+      .select("ppcg")
+      .eq("id", currentUserId);
+  
+    if (userPpcgError) {
+      console.error("Error fetching PPCG from history_data:", userPpcgError);
+      return;
+    }
+  
+    const totalPpcg = userPpcgData.reduce((acc, record) => acc + (parseFloat(record.ppcg) || 0), 0);
+  
+    // Fetch additional user details from user_data
+    const { data: userData, error: userError } = await supabase
       .from("user_data")
-      .select("id, ppcg, parrain_id, parainage_users")
+      .select("id, parrain_id, parainage_users")
       .eq("id", currentUserId)
       .single();
-
-    if (!error) {
-      setUserData(data || {});
+  
+    if (!userError) {
+      setUserData({ ...userData, ppcg: totalPpcg });
+    } else {
+      console.error("Error fetching user data:", userError);
     }
-  }, []);
+  }, []);  
 
   const fetchReferrals = useCallback(async () => {
     if (!userId) return;
