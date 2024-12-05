@@ -133,6 +133,7 @@ const Boutique = () => {
   };
 
   const discountPercentages = {
+    "Distributeur": 0.20,
     "Animateur Adjoint": 0.35, // 35%
     "Animateur": 0.38,         // 38%
     "Manager Adjoint": 0.40,   // 40%
