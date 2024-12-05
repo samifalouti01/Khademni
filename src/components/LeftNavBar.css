@@ -37,7 +37,8 @@
 }
 
 .nav-item:hover {
-    background-color: #555;
+    background-color: #f98900;
+    font-weight: bold;
 }
 
 .nav-icon {
