@@ -144,35 +144,55 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const targetDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Add 30 days in milliseconds
-      targetDate.setHours(0, 0, 0, 0); // Set to the start of the day
+    const fetchChallengeData = async () => {
+      try {
+        // Fetch start and end times from the challenge table
+        const { data, error } = await supabase
+          .from('challenge')
+          .select('start, end')
+          .single(); // Assuming there's only one challenge
   
-      const difference = targetDate - now;
+        if (error) {
+          console.error("Error fetching challenge data:", error);
+          return;
+        }
   
-      if (difference <= 0) {
-        return '00j 00h 00m 00s'; // Countdown is over
+        if (data && data.end) {
+          const endDate = new Date(data.end);
+  
+          const calculateTimeLeft = () => {
+            const now = new Date();
+            const difference = endDate - now;
+  
+            if (difference <= 0) {
+              return '00j 00h 00m 00s'; // Countdown is over
+            }
+  
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((difference / 1000 / 60) % 60);
+            const seconds = Math.floor((difference / 1000) % 60);
+  
+            return `${days}j ${hours}h ${minutes}m ${seconds}s`;
+          };
+  
+          const updateCountdown = () => {
+            setTimeLeft(calculateTimeLeft());
+          };
+  
+          updateCountdown(); // Initial calculation
+          const timer = setInterval(updateCountdown, 1000); // Update every second
+  
+          return () => clearInterval(timer); // Clean up the interval
+        }
+      } catch (error) {
+        console.error("Unexpected error fetching challenge data:", error);
       }
-  
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / 1000 / 60) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-  
-      return `${days}j ${hours}h ${minutes}m ${seconds}s`;
     };
   
-    const updateCountdown = () => {
-      setTimeLeft(calculateTimeLeft());
-    };
+    fetchChallengeData();
+  }, []);
   
-    updateCountdown(); // Initial calculation
-    const timer = setInterval(updateCountdown, 1000); // Update every second
-  
-    return () => clearInterval(timer); // Clean up the interval
-  }, []);  
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
