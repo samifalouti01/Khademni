@@ -3,7 +3,7 @@ import { supabase } from "../../../supabaseClient";
 
 const ParrainagePayment = () => {
   const [orders, setOrders] = useState([]);
-  const [message, setMessage] = useState("");  // State to hold the message
+  const [message, setMessage] = useState(""); // State to hold the message
 
   // Fetch orders on component mount
   useEffect(() => {
@@ -11,7 +11,7 @@ const ParrainagePayment = () => {
       try {
         const { data, error } = await supabase
           .from("order")
-          .select("user_id, name, total_price")
+          .select("user_id, name, total_price, paid")
           .gte("total_price", 0);
 
         if (error) throw error;
@@ -24,6 +24,7 @@ const ParrainagePayment = () => {
               user_id: userId,
               total_price: 0,
               name: order.name || "Unknown User",
+              paid: order.paid, // Track the paid status
             };
           }
 
@@ -70,14 +71,32 @@ const ParrainagePayment = () => {
 
         if (insertError) throw insertError;
 
-        setMessage("Payment processed and parrain_id added to pa_list."); // Set success message
+        // Update the 'paid' column in the 'order' table
+        const { error: updateError } = await supabase
+          .from("order")
+          .update({ paid: "paid" })
+          .eq("user_id", user_id);
+
+        if (updateError) throw updateError;
+
+        setMessage("Payment processed, parrain_id added to pa_list, and order marked as paid."); // Set success message
+
+        // Refresh the orders after payment
+        const { data, error } = await supabase
+          .from("order")
+          .select("user_id, name, total_price, paid")
+          .gte("total_price", 0);
+
+        if (error) throw error;
+
+        setOrders(data);
       } else {
         setMessage("No parrain_id found for this user."); // Set message if no parrain_id
       }
     } catch (error) {
-        console.error("Error processing payment:", error);  // Log the full error object
-        setMessage(`Error processing payment. Please try again. Error: ${error.message}`);  // Display the error message to the user
-      }      
+      console.error("Error processing payment:", error); // Log the full error object
+      setMessage(`Error processing payment. Please try again. Error: ${error.message}`); // Display the error message to the user
+    }
   };
 
   return (
@@ -97,9 +116,17 @@ const ParrainagePayment = () => {
           {orders.map((order) => (
             <tr key={order.user_id}>
               <td>{order.name}</td>
-              <td>{order.total_price.toFixed(2)}</td>
               <td>
-                <button onClick={() => handlePay(order.user_id)}>Pay</button>
+                {isNaN(order.total_price)
+                  ? "N/A" // Display 'N/A' if total_price is not a number
+                  : parseFloat(order.total_price).toFixed(2)} {/* Convert to number and fix decimals */}
+              </td>
+              <td>
+                {order.paid !== "paid" ? (
+                  <button onClick={() => handlePay(order.user_id)}>Pay</button>
+                ) : (
+                  "Paid"
+                )}
               </td>
             </tr>
           ))}

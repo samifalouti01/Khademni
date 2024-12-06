@@ -85,6 +85,7 @@ const PaListPay = () => {
             <th>Parrain ID</th>
             <th>Name</th>
             <th>RIP</th>
+            <th>Get</th>
             <th>Created At</th>
             <th>Actions</th> {/* Column for the delete button */}
           </tr>
@@ -96,6 +97,7 @@ const PaListPay = () => {
                 <td>{item.parrain_id?.split(",")[0]}</td>
                 <td>{item.name}</td>
                 <td>{item.rip}</td>
+                <td>1500 DA</td>
                 <td>{new Date(item.created_at).toLocaleString()}</td> {/* Format created_at */}
                 <td>
                   {/* Delete button */}
