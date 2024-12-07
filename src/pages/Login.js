@@ -54,7 +54,7 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <img src="KhademniLogo2.svg" alt="Logo" className="login-logo" />
+            <img src="Karma.svg" alt="Logo" className="login-logo" />
             <form onSubmit={handleLogin} className="login-form">
                 <h1 className="login-title">Login</h1>
                 <input
