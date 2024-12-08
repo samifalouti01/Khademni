@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { FaCopy, FaArrowUp } from "react-icons/fa";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import "./Catalogue.css";
 
 const Catalogue = () => {
@@ -51,6 +53,32 @@ const Catalogue = () => {
     });
   };
 
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(18);
+    doc.text("Catalogue PDF", 14, 20);
+
+    // Add table data
+    const tableColumn = ["Title", "Price (DA)", "Reference", "Sex"];
+    const tableRows = catalogItems.map((item) => [
+      item.title,
+      item.price * 100, // Price in DA
+      item.ref,
+      item.sex,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+    });
+
+    // Save the PDF
+    doc.save("Catalogue.pdf");
+  };
+
   // Separate render states for loading and error
   if (loading) {
     return <p>Loading...</p>;
@@ -62,6 +90,11 @@ const Catalogue = () => {
 
   return (
     <div className="catalogue">
+      {/* Download PDF Button */}
+      <button className="download-pdf-button" onClick={handleDownloadPDF}>
+        Download PDF
+      </button>
+
       {/* Back Button */}
       <button className="back-button" onClick={() => navigate(-1)}>
         Back
@@ -97,14 +130,50 @@ const Catalogue = () => {
               />
             )}
             <div className="catalogue-details">
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
-              <h2 className="catalogue-title">{item.title}</h2>
-              <p style={{ cursor: "pointer", fontSize: "14px", marginTop: "20px", }} className="catalogue-sex">{item.sex}</p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  margin: "0px",
+                  padding: "0px",
+                  gap: "10px",
+                }}
+              >
+                <h2 className="catalogue-title">{item.title}</h2>
+                <p
+                  style={{ cursor: "pointer", fontSize: "14px", marginTop: "20px" }}
+                  className="catalogue-sex"
+                >
+                  {item.sex}
+                </p>
               </div>
-              <p className="catalogue-price">Prix de vente: <span style={{ color: "#000", fontWeight: "bold" }}>{item.price * 100} DA</span></p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
-              <FaCopy
-                style={{ cursor: "pointer", fontSize: "20px", marginTop: "-18px", marginLeft: "-18px", padding: "0px" }}
+              <p className="catalogue-price">
+                Prix de vente:{" "}
+                <span style={{ color: "#000", fontWeight: "bold" }}>
+                  {item.price * 100} DA
+                </span>
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  margin: "0px",
+                  padding: "0px",
+                  gap: "10px",
+                }}
+              >
+                <FaCopy
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "20px",
+                    marginTop: "-18px",
+                    marginLeft: "-18px",
+                    padding: "0px",
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCopy(item.ref);
