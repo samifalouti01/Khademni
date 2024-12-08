@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { FaCopy, FaArrowUp } from "react-icons/fa";
+import { FaCopy, FaArrowUp, FaDownload, FaArrowLeft } from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "./Catalogue.css";
@@ -14,6 +14,7 @@ const Catalogue = () => {
   const [viewMode, setViewMode] = useState("grid");
   const navigate = useNavigate();
   const [isScrollVisible, setIsScrollVisible] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,24 +101,33 @@ const Catalogue = () => {
     return <p>{error}</p>;
   }
 
+  const sortedProducts = [...catalogItems].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.price - b.price;
+    } else {
+      return b.price - a.price;
+    }
+  });
+
   return (
     <div className="catalogue">
+      <button
+        className="back-button"
+        onClick={() => navigate(-1)}
+        style={{ borderRadius: "60px", padding: "14px 16px", backgroundColor: "#000" }}
+      >
+        <FaArrowLeft />
+      </button>
+  
       <button
         className="download-pdf-button"
         onClick={handleDownloadPDF}
         disabled={loadingPDF} // Disable button when loading
       >
-        {loadingPDF ? (
-          <span className="spinner"></span> // Spinner
-        ) : (
-          "Download PDF"
-        )}
+        <FaDownload style={{ marginRight: "10px" }} />
+        {loadingPDF ? <span className="spinner"></span> : "Download PDF"}
       </button>
-
-      <button className="back-button" onClick={() => navigate(-1)}>
-        Back
-      </button>
-
+  
       <div className="view-toggle">
         <button
           className={`toggle-button ${viewMode === "grid" ? "active" : ""}`}
@@ -132,11 +142,26 @@ const Catalogue = () => {
           List View
         </button>
       </div>
-
+  
+      <div className="sort-buttons">
+        <button
+          className={sortOrder === "asc" ? "active" : ""}
+          onClick={() => setSortOrder("asc")}
+        >
+          Pas cher
+        </button>
+        <button
+          className={sortOrder === "desc" ? "active" : ""}
+          onClick={() => setSortOrder("desc")}
+        >
+          Cher
+        </button>
+      </div>
+  
       <h1 className="catalogue-header">Our Catalogue</h1>
-
+  
       <div className={`catalogue-container ${viewMode}`}>
-        {catalogItems.map((item) => (
+        {sortedProducts.map((item) => (
           <div key={item.id} className={`catalogue-card ${viewMode}`}>
             {item.product_image && (
               <img
@@ -146,9 +171,26 @@ const Catalogue = () => {
               />
             )}
             <div className="catalogue-details">
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  margin: "0px",
+                  padding: "0px",
+                  gap: "10px",
+                }}
+              >
                 <h2 className="catalogue-title">{item.title}</h2>
-                <p style={{ cursor: "pointer", fontSize: "14px", marginTop: "20px" }} className="catalogue-sex">
+                <p
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    marginTop: "20px",
+                  }}
+                  className="catalogue-sex"
+                >
                   {item.sex}
                 </p>
               </div>
@@ -158,7 +200,17 @@ const Catalogue = () => {
                   {item.price * 100} DA
                 </span>
               </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  margin: "0px",
+                  padding: "0px",
+                  gap: "10px",
+                }}
+              >
                 <FaCopy
                   style={{
                     cursor: "pointer",
@@ -178,7 +230,7 @@ const Catalogue = () => {
           </div>
         ))}
       </div>
-
+  
       {isScrollVisible && (
         <button className="scroll-to-top" onClick={handleScrollToTop}>
           <FaArrowUp />

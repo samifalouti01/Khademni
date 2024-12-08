@@ -25,6 +25,7 @@ const Boutique = () => {
 
   const searchRef = useRef(null);
   const cartRef = useRef(null);
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const fetchStoreData = async () => {
     const { data, error } = await supabase
@@ -151,6 +152,13 @@ const Boutique = () => {
   // Calculate total FC (with discounts applied)
   const pointsFC = discountedItems.reduce((total, item) => total + item.discountedPrice, 0);
 
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.price - b.price;
+    } else {
+      return b.price - a.price;
+    }
+  });
 
   return (
     <div className="boutique-container">
@@ -200,8 +208,24 @@ const Boutique = () => {
       )}
       <div className="recommended">
         <h2>{selectedCategory}</h2>
+        <div className="sort-buttons">
+          <button
+            className={sortOrder === "asc" ? "active" : ""}
+            onClick={() => setSortOrder("asc")}
+          >
+            Pas cher
+          </button>
+          <button
+            className={sortOrder === "desc" ? "active" : ""}
+            onClick={() => setSortOrder("desc")}
+          >
+            Cher
+          </button>
+        </div>
+        <br />
+        <br />
         <div className="product-grid">
-          {filteredProducts.map((product) => (
+          {sortedProducts.map((product) => (
             <div
               className="product-card"
               key={product.id}
