@@ -9,12 +9,12 @@ import "./Catalogue.css";
 const Catalogue = () => {
   const [catalogItems, setCatalogItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPDF, setLoadingPDF] = useState(false); // State for PDF loading
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState("grid");
   const navigate = useNavigate();
   const [isScrollVisible, setIsScrollVisible] = useState(false);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,7 +33,6 @@ const Catalogue = () => {
     fetchData();
   }, []);
 
-  // Handle scroll visibility
   useEffect(() => {
     const handleScroll = () => {
       setIsScrollVisible(window.scrollY > 30);
@@ -54,42 +53,45 @@ const Catalogue = () => {
   };
 
   const handleDownloadPDF = async () => {
-    const element = document.querySelector(".catalogue-container"); // The element to capture
+    setLoadingPDF(true); // Start spinner
+    try {
+      const element = document.querySelector(".catalogue-container");
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+      });
 
-    const canvas = await html2canvas(element, {
-      scale: 2, // High resolution
-      useCORS: true, // Enable cross-origin handling
-      allowTaint: false, // Prevent tainting the canvas
-    });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Add the first page
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    // Add additional pages if the content exceeds one page
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
-    }
 
-    pdf.save("Catalogue.pdf");
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
+      pdf.save("Catalogue.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setLoadingPDF(false); // Stop spinner
+    }
   };
 
-  // Separate render states for loading and error
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -100,17 +102,22 @@ const Catalogue = () => {
 
   return (
     <div className="catalogue">
-      {/* Download PDF Button */}
-      <button className="download-pdf-button" onClick={handleDownloadPDF}>
-        Download PDF
+      <button
+        className="download-pdf-button"
+        onClick={handleDownloadPDF}
+        disabled={loadingPDF} // Disable button when loading
+      >
+        {loadingPDF ? (
+          <span className="spinner"></span> // Spinner
+        ) : (
+          "Download PDF"
+        )}
       </button>
 
-      {/* Back Button */}
       <button className="back-button" onClick={() => navigate(-1)}>
         Back
       </button>
 
-      {/* View Mode Toggle */}
       <div className="view-toggle">
         <button
           className={`toggle-button ${viewMode === "grid" ? "active" : ""}`}
@@ -128,7 +135,6 @@ const Catalogue = () => {
 
       <h1 className="catalogue-header">Our Catalogue</h1>
 
-      {/* Dynamic Layout */}
       <div className={`catalogue-container ${viewMode}`}>
         {catalogItems.map((item) => (
           <div key={item.id} className={`catalogue-card ${viewMode}`}>
@@ -140,22 +146,9 @@ const Catalogue = () => {
               />
             )}
             <div className="catalogue-details">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  margin: "0px",
-                  padding: "0px",
-                  gap: "10px",
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
                 <h2 className="catalogue-title">{item.title}</h2>
-                <p
-                  style={{ cursor: "pointer", fontSize: "14px", marginTop: "20px" }}
-                  className="catalogue-sex"
-                >
+                <p style={{ cursor: "pointer", fontSize: "14px", marginTop: "20px" }} className="catalogue-sex">
                   {item.sex}
                 </p>
               </div>
@@ -165,17 +158,7 @@ const Catalogue = () => {
                   {item.price * 100} DA
                 </span>
               </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  margin: "0px",
-                  padding: "0px",
-                  gap: "10px",
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row", margin: "0px", padding: "0px", gap: "10px" }}>
                 <FaCopy
                   style={{
                     cursor: "pointer",
@@ -196,7 +179,6 @@ const Catalogue = () => {
         ))}
       </div>
 
-      {/* Scroll to Top Button */}
       {isScrollVisible && (
         <button className="scroll-to-top" onClick={handleScrollToTop}>
           <FaArrowUp />
