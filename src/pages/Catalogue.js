@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { FaCopy, FaArrowUp } from "react-icons/fa";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import html2canvas from "html2canvas";
 import "./Catalogue.css";
 
 const Catalogue = () => {
@@ -53,30 +53,40 @@ const Catalogue = () => {
     });
   };
 
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF();
+  const handleDownloadPDF = async () => {
+    const element = document.querySelector(".catalogue-container"); // The element to capture
 
-    // Add title
-    doc.setFontSize(18);
-    doc.text("Catalogue PDF", 14, 20);
-
-    // Add table data
-    const tableColumn = ["Title", "Price (DA)", "Reference", "Sex"];
-    const tableRows = catalogItems.map((item) => [
-      item.title,
-      item.price * 100, // Price in DA
-      item.ref,
-      item.sex,
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 30,
+    const canvas = await html2canvas(element, {
+      scale: 2, // High resolution
+      useCORS: true, // Enable cross-origin handling
+      allowTaint: false, // Prevent tainting the canvas
     });
 
-    // Save the PDF
-    doc.save("Catalogue.pdf");
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    // Add the first page
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+
+    // Add additional pages if the content exceeds one page
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+    }
+
+    pdf.save("Catalogue.pdf");
   };
 
   // Separate render states for loading and error
