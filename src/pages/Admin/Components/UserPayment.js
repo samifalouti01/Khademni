@@ -57,41 +57,58 @@ const UserPayment = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
-
-    const { data, error } = await supabase
-      .from("user_data")
-      .select("*");
-
-    if (error) {
+  
+    try {
+      // Fetch user data from `user_data` table
+      const { data: userData, error: userError } = await supabase
+        .from("user_data")
+        .select("*");
+  
+      if (userError) throw userError;
+  
+      // Fetch `ppcg` from `history_data`
+      const { data: historyData, error: historyError } = await supabase
+        .from("history_data")
+        .select("id, ppcg");
+  
+      if (historyError) throw historyError;
+  
+      // Create a lookup for ppcg by id
+      const ppcgLookup = historyData.reduce((acc, record) => {
+        acc[record.id] = record.ppcg;
+        return acc;
+      }, {});
+  
+      // Process users
+      const processedUsers = userData.map((user) => {
+        const userStatus = user.perso && parseFloat(user.perso) >= 100 ? "actif" : "inactif";
+        const teamMembers = userData.filter(
+          (u) => u.parrain_id && u.parrain_id.split(",").includes(String(user.id))
+        );
+        const userLevel = determineLevel(ppcgLookup[user.id] || 0); // Use `ppcg` from history_data
+        const totalIncome = calculateIncome(userLevel, teamMembers);
+  
+        return {
+          ...user,
+          level: userLevel,
+          totalIncome,
+          teamSize: teamMembers.length,
+          status: userStatus,
+        };
+      });
+  
+      setUsers(processedUsers);
+    } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const processedUsers = data.map((user) => {
-      const userStatus = user.perso && parseFloat(user.perso) >= 100 ? "actif" : "inactif";
-      const teamMembers = data.filter(
-        (u) => u.parrain_id && u.parrain_id.split(",").includes(String(user.id))
-      );
-      const userLevel = determineLevel(user.ppcg);
-      const totalIncome = calculateIncome(userLevel, teamMembers);
-
-      return {
-        ...user,
-        level: userLevel,
-        totalIncome,
-        teamSize: teamMembers.length,
-        status: userStatus,
-      };
-    });
-
-    setUsers(processedUsers);
-    setLoading(false);
   };
-
+  
   useEffect(() => {
     fetchUsers();
   }, []);
+  
 
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
