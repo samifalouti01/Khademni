@@ -41,8 +41,29 @@ const Historique = () => {
         return { emoji: "🟠", color: "#F98900" };
       case "refusé":
         return { emoji: "🔴", color: "#E91E32" };
+      case "annulé":
+        return { emoji: "🔴", color: "#E91E32" };
       default:
         return { emoji: "⚪", color: "gray" };
+    }
+  };
+
+  const handleCancel = async (orderId) => {
+    try {
+      const { error } = await supabase
+        .from("order")
+        .update({ order_status: "annulé" })
+        .eq("id", orderId);
+
+      if (error) throw error;
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, order_status: "annulé" } : order
+        )
+      );
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
   };
 
@@ -73,6 +94,9 @@ const Historique = () => {
                     <p className="history-time">
                       {new Date(order.created_at).toLocaleString()}
                     </p>
+                    {order.order_status !== "annulé" && (
+                      <button onClick={() => handleCancel(order.id)}>Annuler</button>
+                    )}
                   </div>
                 </div>
               );

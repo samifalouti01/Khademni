@@ -83,7 +83,16 @@ const Dashboard = () => {
       });
   };
 
-  const openParrainModal = () => setShowParrain(true);
+  const openParrainModal = () => {
+    if (level !== "Distributeur") {
+      setShowParrain(true);
+    } else {
+      setMessage("Vous devez avoir un niveau élevé de «Distributeur»");
+      setTimeout(() => {
+        setMessage(""); 
+      }, 3000);
+    }
+  };
   const closeParrainModal = () => setShowParrain(false);
 
   const handleImageUpload = async (file) => {
